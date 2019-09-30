@@ -1,0 +1,42 @@
+[submodule "linux-on-litex-vexriscv"]
+	path = linux-on-litex-vexriscv
+	url = https://github.com/litex-hub/linux-on-litex-vexriscv
+[submodule "litex-boards"]
+	path = litex-boards
+	url = https://github.com/litex-hub/litex-boards
+[submodule "litex"]
+	path = litex
+	url = https://github.com/enjoy-digital/litex
+[submodule "litedram"]
+	path = litedram
+	url = https://github.com/enjoy-digital/litedram
+[submodule "liteeth"]
+	path = liteeth
+	url = https://github.com/enjoy-digital/liteeth
+[submodule "litepcie"]
+	path = litepcie
+	url = https://github.com/enjoy-digital/litepcie
+[submodule "litesata"]
+	path = litesata
+	url = https://github.com/enjoy-digital/litesata
+[submodule "litesdcard"]
+	path = litesdcard
+	url = https://github.com/enjoy-digital/litesdcard
+[submodule "liteiclink"]
+	path = liteiclink
+	url = https://github.com/enjoy-digital/liteiclink
+[submodule "litejesd204b"]
+	path = litejesd204b
+	url = https://github.com/enjoy-digital/litejesd204b
+[submodule "litevideo"]
+	path = litevideo
+	url = https://github.com/enjoy-digital/litevideo
+[submodule "litescope"]
+	path = litescope
+	url = https://github.com/enjoy-digital/litescope
+[submodule "migen"]
+	path = migen
+	url = https://github.com/m-labs/migen
+[submodule "buildroot"]
+	path = buildroot
+	url = https://github.com/buildroot/buildroot
