@@ -39,7 +39,7 @@ toolchain:
 	cd ${RISCV_TOOLCHAIN_DIR}; make -j8 linux
 
 toolchain-direnv:
-	echo "PATH_add ${TOOLCHAIN_DIR}/riscv/bin" > .envrc.local
+	echo "PATH_add ${TOOLCHAIN_BUILD_DIR}/riscv/bin" > .envrc.local
 	direnv allow .
 
 .PHONY: toolchain
