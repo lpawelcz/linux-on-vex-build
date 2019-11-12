@@ -46,6 +46,9 @@ toolchain-direnv:
 
 ### BUILDROOT ###
 
+br-init:
+	cd ${BUILDROOT_DIR}; make BR2_EXTERNAL=../linux-on-litex-vexriscv/buildroot/ litex_vexriscv_defconfig
+
 br-menuconfig:
 	cd ${BUILDROOT_DIR}; make menuconfig
 
@@ -53,6 +56,7 @@ br-clean:
 	cd ${BUILDROOT_DIR}; make clean
 
 br-all:
+	make init
 	cd ${BUILDROOT_DIR}; make
 
 br-linux-menuconfig:
@@ -64,10 +68,17 @@ br-linux-clean:
 ### LINUX ON VEXRISCV ###
 
 vex-all:
+	make vex-build
+	make vex-load
+
+vex-build:
 	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; ./make.py --board=${BOARD} --build
 
 vex-load:
 	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; ./make.py --board=${BOARD} --load
+
+vex-flash:
+	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; ./make.py --board=${BOARD} --flash
 
 vex-clean:
 	cd ${LINUX_ON_LITEX_VEXRISCV_DIR};
