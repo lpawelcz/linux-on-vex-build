@@ -56,7 +56,7 @@ br-clean:
 	cd ${BUILDROOT_DIR}; make clean
 
 br-all:
-	make init
+	make br-init
 	cd ${BUILDROOT_DIR}; make
 
 br-linux-menuconfig:
