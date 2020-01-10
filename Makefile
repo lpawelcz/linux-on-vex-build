@@ -1,6 +1,8 @@
 BOARD ?= arty
 TFTP_SERVER_DIR=/tftpboot
 
+-include Makefile.local
+
 ### HELP ###
 
 help:

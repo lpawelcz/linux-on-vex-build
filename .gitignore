@@ -1,6 +1,7 @@
 __pycache__/
 toolchain/
 .envrc.local
+Makefile.local
 
 ### VIM ###
 
