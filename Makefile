@@ -1,4 +1,5 @@
 BOARD ?= arty
+TFTP_SERVER_DIR=/tftpboot
 
 ### HELP ###
 
@@ -8,9 +9,9 @@ help:
 ### SHORTCUTS ###
 
 init:
-	make toolchain-prerequisites
-	make toolchain
-	make toolchain-direnv
+	make toolchain/prerequisites
+	make toolchain/build
+	make toolchain/direnv
 	make update
 
 update:
@@ -28,7 +29,7 @@ toolchain/prerequisites:
                      libmpfr-dev libgmp-dev gawk build-essential bison flex \
                      texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev
 
-toolchain:
+toolchain/build:
 	mkdir -p toolchain; mkdir -p ${TOOLCHAIN_BUILD_DIR}
 	cd ${TOOLCHAIN_DIR}; git clone --recursive https://github.com/riscv/riscv-gnu-toolchain ${RISCV_TOOLCHAIN_DIR}
 	cd ${RISCV_TOOLCHAIN_DIR}; ./configure --prefix=${TOOLCHAIN_BUILD_DIR}/riscv
@@ -55,7 +56,12 @@ br/clean:
 	cd ${BUILDROOT_DIR}; make clean
 
 br/all:
-	make br-init
+	make br/init
+	make br/linux-clean
+	make br/build
+	make vex/load
+
+br/build:
 	cd ${BUILDROOT_DIR}; make
 
 br/linux-menuconfig:
@@ -64,13 +70,20 @@ br/linux-menuconfig:
 br/linux-clean:
 	cd ${BUILDROOT_DIR}; make linux-dirclean
 
+br/tftp:
+	make tftp/clean
+	cp -f ${BUILDROOT_DIR}/output/images/Image ${TFTP_SERVER_DIR}/Image
+	cp -f ${BUILDROOT_DIR}/output/images/rootfs.cpio ${TFTP_SERVER_DIR}/rootfs.cpio
+	cp -f ${LINUX_ON_LITEX_VEXRISCV_DIR}/buildroot/rv32.dtb ${TFTP_SERVER_DIR}/rv32.dtb
+	cp -f ${LINUX_ON_LITEX_VEXRISCV_DIR}/emulator/emulator.bin ${TFTP_SERVER_DIR}/emulator.bin
+
 ### LINUX ON VEXRISCV ###
 
 LINUX_ON_LITEX_VEXRISCV_DIR=${PWD}/linux-on-litex-vexriscv
 
 vex/all:
-	make vex-build
-	make vex-load
+	make vex/build
+	make vex/load
 
 vex/build:
 	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; ./make.py --board=${BOARD} --build
@@ -88,6 +101,15 @@ vex/clean:
 
 LINUX_KERNEL_DIR=${PWD}/linux
 
+linux/init:
+	cp ${LINUX_ON_LITEX_VEXRISCV_DIR}/buildroot/board/litex_vexriscv/linux.config ${LINUX_KERNEL_DIR}/.config
+	cd ${LINUX_KERNEL_DIR}; make olddefconfig
+
+linux/all:
+	make linux/build
+	make linux/tftp
+	make vex/load
+
 linux/menuconfig:
 	cd ${LINUX_KERNEL_DIR}; make menuconfig
 
@@ -96,3 +118,15 @@ linux/build:
 
 linux/clean:
 	cd ${LINUX_KERNEL_DIR}; make clean
+
+linux/tftp:
+	make tftp/clean
+	cp ${LINUX_KERNEL_DIR}/arch/riscv/boot/Image ${TFTP_SERVER_DIR}/Image
+	cp ${LINUX_ON_LITEX_VEXRISCV_DIR}/buildroot/rv32.dtb ${TFTP_SERVER_DIR}/rv32.dtb
+	cp ${LINUX_ON_LITEX_VEXRISCV_DIR}/emulator/emulator.bin ${TFTP_SERVER_DIR}/emulator.bin
+	cp ${BUILDROOT_DIR}/output/images/rootfs.cpio ${TFTP_SERVER_DIR}/rootfs.cpio
+
+### TFTP SERVER ###
+
+tftp/clean:
+	cd ${TFTP_SERVER_DIR}; rm -f Image rv32.dtb emulator.bin rootfs.cpio
