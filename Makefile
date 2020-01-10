@@ -1,9 +1,5 @@
 BOARD ?= arty
 
-BUILDROOT_DIR=${PWD}/buildroot
-LINUX_ON_LITEX_VEXRISCV_DIR=${PWD}/linux-on-litex-vexriscv
-TOOLCHAIN_DIR=${PWD}/toolchain
-
 ### HELP ###
 
 help:
@@ -23,10 +19,11 @@ update:
 
 ### TOOLCHAIN ###
 
+TOOLCHAIN_DIR=${PWD}/toolchain
 RISCV_TOOLCHAIN_DIR=${TOOLCHAIN_DIR}/riscv-gnu-toolchain
 TOOLCHAIN_BUILD_DIR=${TOOLCHAIN_DIR}/build
 
-toolchain-prerequisites:
+toolchain/prerequisites:
 	sudo apt install autoconf automake autotools-dev curl libmpc-dev \
                      libmpfr-dev libgmp-dev gawk build-essential bison flex \
                      texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev
@@ -38,7 +35,7 @@ toolchain:
 	cd ${RISCV_TOOLCHAIN_DIR}; make -j8
 	cd ${RISCV_TOOLCHAIN_DIR}; make -j8 linux
 
-toolchain-direnv:
+toolchain/direnv:
 	echo "PATH_add ${TOOLCHAIN_BUILD_DIR}/riscv/bin" > .envrc.local
 	direnv allow .
 
@@ -46,39 +43,56 @@ toolchain-direnv:
 
 ### BUILDROOT ###
 
-br-init:
+BUILDROOT_DIR=${PWD}/buildroot
+
+br/init:
 	cd ${BUILDROOT_DIR}; make BR2_EXTERNAL=../linux-on-litex-vexriscv/buildroot/ litex_vexriscv_defconfig
 
-br-menuconfig:
+br/menuconfig:
 	cd ${BUILDROOT_DIR}; make menuconfig
 
-br-clean:
+br/clean:
 	cd ${BUILDROOT_DIR}; make clean
 
-br-all:
+br/all:
 	make br-init
 	cd ${BUILDROOT_DIR}; make
 
-br-linux-menuconfig:
+br/linux-menuconfig:
 	cd ${BUILDROOT_DIR}; make linux-menuconfig
 
-br-linux-clean:
+br/linux-clean:
 	cd ${BUILDROOT_DIR}; make linux-dirclean
 
 ### LINUX ON VEXRISCV ###
 
-vex-all:
+LINUX_ON_LITEX_VEXRISCV_DIR=${PWD}/linux-on-litex-vexriscv
+
+vex/all:
 	make vex-build
 	make vex-load
 
-vex-build:
+vex/build:
 	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; ./make.py --board=${BOARD} --build
 
-vex-load:
+vex/load:
 	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; ./make.py --board=${BOARD} --load
 
-vex-flash:
+vex/flash:
 	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; ./make.py --board=${BOARD} --flash
 
-vex-clean:
-	cd ${LINUX_ON_LITEX_VEXRISCV_DIR};
+vex/clean:
+	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; cd build; rm -rfi *
+
+### LINUX ###
+
+LINUX_KERNEL_DIR=${PWD}/linux
+
+linux/menuconfig:
+	cd ${LINUX_KERNEL_DIR}; make menuconfig
+
+linux/build:
+	cd ${LINUX_KERNEL_DIR}; make -j8
+
+linux/clean:
+	cd ${LINUX_KERNEL_DIR}; make clean
