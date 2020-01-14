@@ -20,6 +20,22 @@ update:
 	git submodule update --remote
 	git submodule foreach 'git submodule update --init --recursive'
 
+ctags:
+	ctags -R linux \
+          linux-on-litex-vexriscv \
+          migen \
+          litex \
+          litex-boards \
+          litedram \
+          liteeth \
+          litepcie \
+          litesata \
+          litesdcard \
+          liteiclink \
+          litejesd204b \
+          litevideo \
+          litescope
+
 ### TOOLCHAIN ###
 
 TOOLCHAIN_DIR=${PWD}/toolchain
@@ -95,6 +111,9 @@ vex/load:
 
 vex/flash:
 	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; ./make.py --board=${BOARD} --flash
+
+vex/soft:
+	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; ./make.py --board=${BOARD}
 
 vex/clean:
 	cd ${LINUX_ON_LITEX_VEXRISCV_DIR}; cd build; rm -rfi *
