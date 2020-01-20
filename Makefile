@@ -87,6 +87,7 @@ br/clean:
 	cd ${BUILDROOT_DIR}; make clean
 
 br/build:
+	make br/init
 	cd ${BUILDROOT_DIR}; make
 
 br/linux-menuconfig:
@@ -107,6 +108,7 @@ br/tftp:
 ### LINUX ON VEXRISCV ###
 
 LINUX_ON_LITEX_VEXRISCV_DIR=${PWD}/linux-on-litex-vexriscv
+LINUX_ON_LITEX_VEXRISCV_PATCH_DIR=${LINUX_ON_LITEX_VEXRISCV_DIR}/buildroot/board/litex_vexriscv/patches/linux
 
 vex/all:
 	make vex/build
@@ -145,6 +147,9 @@ LINUX_KERNEL_DIR=${PWD}/linux
 linux/init:
 	cp ${LINUX_ON_LITEX_VEXRISCV_DIR}/buildroot/board/litex_vexriscv/linux.config ${LINUX_KERNEL_DIR}/.config
 	cd ${LINUX_KERNEL_DIR}; make olddefconfig
+
+linux/apply-patches:
+	apply_patches.sh
 
 linux/all:
 	make linux/build
