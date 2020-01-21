@@ -19,8 +19,7 @@ init:
 	make update
 
 update:
-	git submodule update --remote
-	git submodule foreach 'git submodule update --init --recursive'
+	git submodule update --init --recursive
 
 ctags:
 	ctags -R linux \
